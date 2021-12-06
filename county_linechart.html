@@ -187,7 +187,20 @@
     })
     
     //Call for default graph
-    update(2021,'Jan','LaborForce')
+
+    const year_passed = urlParams.get('year')
+    console.log(year_passed);
+    // shirt
+
+    const month_passed = urlParams.get('month')
+    console.log(month_passed);
+    // blue
+
+    const MetricName = urlParams.get('metric')
+    console.log(MetricName);
+
+    update(year_passed,month_passed,'LaborForce')
+    //update(2021,'Jan','LaborForce')
 
     
 })
