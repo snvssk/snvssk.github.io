@@ -186,23 +186,9 @@
         update(selectedYear,selectedMonth,selectedMetric)
     })
     
-    //Call for default graph
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    console.log(urlParams)
-    const year_passed = urlParams.get('year')
-    const month_passed = urlParams.get('month')
-    //const metric_passed = urlParams.get('metric')
-    //console.log(metric_passed);
+   
 
-    metric_passed = 'LaborForce'
-    update(year_passed,month_passed,metric_passed)
-
-    d3.select('#year_select').property('value', year_passed);
-    d3.select('#month_select').property('value', month_passed);
-    d3.select('#metric_select').property('value', metric_passed);
-
-    //update(2021,'Jan','LaborForce')
+    update(2021,'Jan','LaborForce')
 
     
 })
