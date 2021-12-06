@@ -187,7 +187,8 @@
     })
     
     //Call for default graph
-
+    const queryString = window.location.search;
+    console.log(queryString);
     const urlParams = new URLSearchParams(queryString);
     const year_passed = urlParams.get('year')
     console.log(year_passed);
