@@ -1,4 +1,4 @@
-Year,Period,County,Adjusted,Preliminary,Labor Force,Employment,Unemployment,Unemployment Rate,State
+Year,Period,County,Adjusted,Preliminary,LaborForce,Employment,Unemployment,UnemploymentRate,State
 2021,Jan,Alameda County,Not Adj,Not Prelim,802200,744200,58000,7.2,"California,USA"
 2021,Feb,Alameda County,Not Adj,Not Prelim,811100,756500,54600,6.7,"California,USA"
 2021,Mar,Alameda County,Not Adj,Not Prelim,805700,754200,51500,6.4,"California,USA"
