@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<title>Multi Line Chart</title>
+<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<style>
+    
+</style>
+</head>
+<body>
+    <select id="year_select"></select>
+    <select id="month_select"></select>
+    <select id="metric_select"></select>
+    <div id="my_dataviz"></div>
+    
+<script>
+
+    var dropDown = d3.select("#year_container").append("select").attr("name", "year-list");
+
+
+    
+
+    
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 70, left: 60},
+        width = 1260 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
+    
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+      .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+    
+    // Parse the Data
+    d3.csv("https://snvssk.github.io/County_employment.csv", function(data) {
+
+    //Find all years from csv data
+    function onlyUnique(value, index, self) {
+        return self.indexOf(value) === index;
+    }
+
+    // Dropdown elements creation:
+    var a = data.map(function(d) { return d.Year; })
+    var allyears = a.filter(onlyUnique);
+    var b = data.map(function(d) { return d.Period; })
+    var allmonths = b.filter(onlyUnique)
+
+    var allMetrics = ["LaborForce","Employment","Unemployment"]
+
+    
+    //dropdown
+    d3.select('#year_select')
+        .selectAll("myOptions")
+        .data(allyears) 
+        .enter()
+        .append("option")
+        .text(function (y) { return y; })
+        .attr("value", function (y) { return y; });
+
+
+    d3.select('#month_select')
+        .selectAll("myOptions")
+        .data(allmonths) 
+        .enter()
+        .append("option")
+        .text(function (y) { return y; })
+        .attr("value", function (y) { return y; });
+
+    d3.select('#metric_select')
+        .selectAll("myOptions")
+        .data(allMetrics) 
+        .enter()
+        .append("option")
+        .text(function (y) { return y; })
+        .attr("value", function (y) { return y; });
+
+
+    function update(selectedYear,selectedMonth,selectedMetric) {
+    //console.log(data)
+    //console.log(selectedYear)
+    //console.log(selectedMonth)
+    filtered_data = data.filter(function(row) {
+                return (row['Year'] == selectedYear &&  row['Period'] == selectedMonth );
+             })
+
+    console.log(selectedMetric)
+    field_data = filtered_data.map(function(fileds) {
+                return { Year : fileds.Year, County: fileds.County, Value : parseInt(fileds[selectedMetric]) };
+             })
+
+    //console.log(filtered_data)
+
+    svg.selectAll("*").remove();
+
+    // X axis
+    var x = d3.scaleBand()
+      .range([ 0, width ])
+      .domain(data.map(function(d) { return d.County; }))
+      .padding(0.2);
+
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "translate(-10,0)rotate(-45)")
+      .style("text-anchor", "end");
+    
+    
+    
+    y_scale = d3.max(field_data, function(d) { return d.Value; } )+100000;
+
+    console.log(y_scale)
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+      .domain([0, y_scale])
+      .range([ height, 0]);
+
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -(height/2))
+        .attr("y", -50)
+        .style("text-anchor", "middle")
+        .text("Population");
+
+    svg.append("text")
+        .attr("x", width/2)
+        .attr("y", 5)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("County wise Employment Statstics");
+
+    console.log(field_data)
+
+    // Bars
+    svg.selectAll("mybar")
+        .data(field_data)
+        .enter()
+        .append("rect")
+        .attr("x", function(d) { return x(d.County);})
+        .attr("y", function(d) { return y(d.Value);})
+        .attr("width", x.bandwidth())
+        .attr("height", function(d) { return height - y(d.Value); })
+        .attr("fill", "lightgreen")   
+
+    }
+    
+    
+    
+
+    // When the year is changed, run the updateChart function
+    d3.select("#year_select").on("change", function(d) {
+        // recover the option that has been chosen
+        var selectedYear = d3.select(this).property("value")
+        var selectedMonth = d3.select('#month_select').property("value")
+        var selectedMetric = d3.select('#metric_select').property("value")
+        // run the updateChart function with this selected option
+        update(selectedYear,selectedMonth,selectedMetric)
+    })
+
+    // When the month is changed, run the updateChart function
+    d3.select("#month_select").on("change", function(d) {
+        // recover the option that has been chosen
+        var selectedMonth = d3.select(this).property("value")
+        var selectedYear = d3.select('#year_select').property("value")
+        var selectedMetric = d3.select('#metric_select').property("value")
+        // run the updateChart function with this selected option
+        update(selectedYear,selectedMonth,selectedMetric)
+    })
+
+    // When the Metric is changed, run the updateChart function
+    d3.select("#metric_select").on("change", function(d) {
+        // recover the option that has been chosen
+        var selectedMetric = d3.select(this).property("value")
+        var selectedMonth = d3.select('#month_select').property("value")
+        var selectedYear = d3.select('#year_select').property("value")
+        // run the updateChart function with this selected option
+        update(selectedYear,selectedMonth,selectedMetric)
+    })
+    
+    //Call for default graph
+    update(2021,'Jan','LaborForce')
+
+    
+})
+    
+
+    
+    </script>
+</body>
